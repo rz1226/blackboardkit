@@ -1,17 +1,45 @@
-如何使用
-典型的应用场景是：想记录一些日志，计时，计数等，可以在web的某个端口方便的查看最近的信息
-主要的作用是监控和查错
+package main
 
+import (
+	"github.com/rz1226/rzlib/blackboardkit"
+	"time"
+)
 
-//创建监控黑板 黑板一共存在三种kit， 分别是logkit counterkit timerkit 用于记录日志，计数器，计时器
-bb = blackboardkit.NewBlockBorad(groupname, bbname, bbreadme)
-
-
-//如何监控
-import "github.com/rz1226/rzlib/blackboardkit"
-func main(){
-    blackboardkit.StartMonitor("9091" ) // 用浏览器看9091/查看监控数据
+type SomeBB struct {
+	InsertUser *blackboardkit.BlackBoradKit `readme:"插入用户信息 "`
+	GaoDeApi   *blackboardkit.BlackBoradKit `readme:"调用高德地图api "`
+	Db         *blackboardkit.BlackBoradKit `readme:"调用数据库 "`
 }
 
+//  每一个blackboard包含info, err, warn 日志， 一个计数器，一个计时器
 
+func main() {
 
+	bb := SomeBB{}
+
+	blackboardkit.BBinit(&bb, "somegroup")
+
+	blackboardkit.StartMonitor("9090")
+	for i := 0; i < 5; i++ {
+		go add(bb)
+	}
+
+	time.Sleep(time.Second * 1000)
+
+}
+func add(bb SomeBB) {
+	for i := 0; i < 10000000000; i++ {
+		t := bb.Db.Start("开始操作db")
+		time.Sleep(time.Microsecond)
+		bb.Db.Log("这是db日志", i)
+		bb.Db.Err("这是db错误日志")
+		bb.Db.Inc()
+		bb.Db.End(t)
+
+		t2 := bb.InsertUser.Start("开始操作注册")
+		time.Sleep(time.Microsecond)
+		bb.InsertUser.Log("这是注册用户日志", i)
+		bb.InsertUser.Inc()
+		bb.InsertUser.End(t2)
+	}
+}
