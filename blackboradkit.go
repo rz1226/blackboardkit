@@ -228,11 +228,13 @@ func httpShowAll(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, str)
 }
 
-var StartedMonitor int32 = 0
+var startedMonitor int32 = 0
 
 func StartMonitor(port string) {
-	if atomic.CompareAndSwapInt32(&StartedMonitor, 0, 1) {
+	if atomic.CompareAndSwapInt32(&startedMonitor, 0, 1) {
 		go serverkit.NewSimpleHTTPServer().Add("/", httpShowAll).Start(port)
+	}else{
+		fmt.Println("no action , bb monitor started")
 	}
 }
 
