@@ -38,6 +38,9 @@ bb.Info.Ends(t)
 
 */
 
+
+
+
 var allbb *allBB
 
 func init() {
