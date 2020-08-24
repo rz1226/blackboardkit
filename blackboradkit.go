@@ -38,9 +38,6 @@ bb.Info.Ends(t)
 
 */
 
-
-
-
 var allbb *allBB
 
 func init() {
@@ -233,7 +230,7 @@ var startedMonitor int32 = 0
 func StartMonitor(port string) {
 	if atomic.CompareAndSwapInt32(&startedMonitor, 0, 1) {
 		go serverkit.NewSimpleHTTPServer().Add("/", httpShowAll).Start(port)
-	}else{
+	} else {
 		fmt.Println("no action , bb monitor started")
 	}
 }
